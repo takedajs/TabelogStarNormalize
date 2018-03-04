@@ -1,0 +1,15 @@
+{
+  "description": "",
+  "manifest_version": 2,
+  "name": "TabelogStarNormalize",
+  "version": "1.0.0",
+  "homepage_url": "https://github.com/takedajs/TabelogStarNormalize",
+  "icons": {
+    "48": "icons/tabelog_star_normalize_60.png"
+  },
+
+  "content_scripts": [{
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"]
+  }]
+}
