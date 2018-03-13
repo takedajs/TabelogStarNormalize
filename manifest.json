@@ -7,9 +7,14 @@
   "icons": {
     "48": "icons/tabelog_star_normalize_60.png"
   },
-
   "content_scripts": [{
-      "matches": ["<all_urls>"],
-      "js": ["content-script.js"]
+      "matches": [
+        "http://tabelog.com/*",
+        "https://tabelog.com/*",
+        "http://s.tabelog.com/*",
+        "https://s.tabelog.com/*"
+      ],
+      "js": ["content-script.js"],
+      "run_at": "document_end"
   }]
 }
