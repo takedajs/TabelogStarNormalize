@@ -10,6 +10,8 @@ document.body.appendChild(script);
 
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+patch+')();'));
+document.body.appendChild(script);
+
 function patch(){
     //既に表示されているスコアを正規化
     var normalize = function(score) {
