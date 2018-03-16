@@ -2,14 +2,16 @@ var style = document.createElement("style");
 style.appendChild(document.createTextNode('.tabelog-score { font-weight: normal; font-size: 60%; color: #bbb }'));
 document.body.appendChild(style);
 
-// spではjqueryが呼ばれていないので追加する
-var script = document.createElement('script');
-//pc側で利用されているjqueryのバージョンに合わせている
-script.src = "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";
-document.body.appendChild(script);
+//// spではjqueryが呼ばれていないので追加する
+//var script = document.createElement('script');
+////pc側で利用されているjqueryのバージョンに合わせている
+//script.src = "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";
+//document.body.appendChild(script);
 
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+patch+')();'));
+document.body.appendChild(script);
+
 function patch(){
     //既に表示されているスコアを正規化
     var normalize = function(score) {
@@ -52,6 +54,29 @@ function patch(){
     });
 
     //SP用
+    //jqueryを利用していない版
+    var tmpElement = document.getElementsByClassName("sptb-rating--lg");
+    for (var i = 0; i < tmpElement.length; i++) {
+
+        var element = tmpElement[i].getElementsByClassName("sptb-rating__val")[0];
+        var score = parseFloat(element.textContent);
+
+        //評価が0件のお店対応
+        if (isNaN(score)) continue;
+
+        //点数を正規化
+        var normalize_score = normalize(score);
+
+        //点数を正規化したものに変更する
+        element.innerHTML = normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ')</span>';
+
+        //星を正規化した点数に合わせる
+        var rate = element.parentNode;
+        rate.className = rate.className.replace(/sptb-rating--val\d\d/, "sptb-rating--val" + normalize_score * 10);
+    }
+
+    //SP用
+    //jqueryを利用している版
     $(".sptb-rating__val").each(function(index, element) {
         var score = parseFloat($(element).text());
 
