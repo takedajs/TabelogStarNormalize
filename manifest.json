@@ -1,11 +1,11 @@
 {
-  "description": "",
+  "description": "Normalize and redisplay stars that are used for evaluation in restaurant reviews evaluation site「Tabelog」",
   "manifest_version": 2,
   "name": "TabelogStarNormalize",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage_url": "https://github.com/takedajs/TabelogStarNormalize",
   "icons": {
-    "48": "icons/tabelog_star_normalize_60.png"
+    "48": "icons/60.png"
   },
   "content_scripts": [{
       "matches": [

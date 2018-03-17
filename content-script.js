@@ -2,12 +2,6 @@ var style = document.createElement("style");
 style.appendChild(document.createTextNode('.tabelog-score { font-weight: normal; font-size: 60%; color: #bbb }'));
 document.body.appendChild(style);
 
-//// spではjqueryが呼ばれていないので追加する
-//var script = document.createElement('script');
-////pc側で利用されているjqueryのバージョンに合わせている
-//script.src = "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";
-//document.body.appendChild(script);
-
 var script = document.createElement('script');
 script.appendChild(document.createTextNode('('+patch+')();'));
 document.body.appendChild(script);
@@ -34,63 +28,133 @@ function patch(){
         return normalize_score;
     }
 
-    //PC用
-    //トップ、エリア検索結果、マイページに表示されているお店対象
-    $(".c-rating__val").each(function(index, element) {
-        var score = parseFloat($(element).text());
-
-        //評価が0件のお店対応
-        if (isNaN(score)) return;
-
-        //点数を正規化
-        var normalize_score = normalize(score);
-
-        //点数を正規化したものに変更する
-        $(element).html(normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ")</span>");
-
-        //星を正規化した点数に合わせる
-        var rate = $(element).parent()[0];
-        rate.className = rate.className.replace(/c-rating--val\d\d/, "c-rating--val" + normalize_score * 10);
-    });
-
-    //SP用
-    //jqueryを利用していない版
-    var tmpElement = document.getElementsByClassName("sptb-rating--lg");
-    for (var i = 0; i < tmpElement.length; i++) {
-
-        var element = tmpElement[i].getElementsByClassName("sptb-rating__val")[0];
-        var score = parseFloat(element.textContent);
-
-        //評価が0件のお店対応
-        if (isNaN(score)) continue;
-
-        //点数を正規化
-        var normalize_score = normalize(score);
-
-        //点数を正規化したものに変更する
-        element.innerHTML = normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ')</span>';
-
-        //星を正規化した点数に合わせる
-        var rate = element.parentNode;
-        rate.className = rate.className.replace(/sptb-rating--val\d\d/, "sptb-rating--val" + normalize_score * 10);
+    //モバイルかどうか判別
+    //id="useragent-switcher"はSPだけに存在していた
+    var isMobile = false;
+    if (document.getElementById("useragent-switcher") != null ) {
+        isMobile = true;
     }
 
-    //SP用
-    //jqueryを利用している版
-    $(".sptb-rating__val").each(function(index, element) {
-        var score = parseFloat($(element).text());
+    if (isMobile) {
+        //SP用
+        //検索結果ページ
+        var sptbElement = document.getElementsByClassName("sptb-rating--lg");
+        for (var i = 0; i < sptbElement.length; i++) {
 
-        //評価が0件のお店対応
-        if (isNaN(score)) return;
+            //一度正規化したものは、再度正規化を行わない
+            if (typeof sptbElement[i].getElementsByClassName("tabelog-score")[0] !== "undefined") {
+                continue;
+            }
 
-        //点数を正規化
-        var normalize_score = normalize(score);
+            var element = sptbElement[i].getElementsByClassName("sptb-rating__val")[0];
+            var score = parseFloat(element.textContent);
 
-        //点数を正規化したものに変更する
-        $(element).html(normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ")</span>");
+            //評価が0件のお店対応
+            if (isNaN(score)) continue;
 
-        //星を正規化した点数に合わせる
-        var rate = $(element).parent()[0];
-        rate.className = rate.className.replace(/sptb-rating--val\d\d/, "sptb-rating--val" + normalize_score * 10);
-    });
+            //点数を正規化
+            var normalize_score = normalize(score);
+
+            //点数を正規化したものに変更する
+            element.innerHTML = normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ')</span>';
+
+            //星を正規化した点数に合わせる
+            var rate = element.parentNode;
+            rate.className = rate.className.replace(/sptb-rating--val\d\d/, "sptb-rating--val" + normalize_score * 10);
+        }
+
+        //店舗詳細ページ
+        var rstdlElement = document.getElementsByClassName("rstdtl-top-info");
+        for (var i = 0; i < rstdlElement.length; i++) {
+
+            //一度正規化したものは、再度正規化を行わない
+            if (typeof rstdlElement[i].getElementsByClassName("tabelog-score")[0] !== "undefined") {
+                continue;
+            }
+
+            var element = rstdlElement[i].getElementsByClassName("rstdtl-top-rating__score-val")[0];
+            var score = parseFloat(element.textContent);
+
+            //評価が0件のお店対応
+            if (isNaN(score)) continue;
+
+            //点数を正規化
+            var normalize_score = normalize(score);
+
+            //点数を正規化したものに変更する
+            element.innerHTML = normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ')</span>';
+
+            //星を正規化した点数に合わせる
+            var rate = element.parentNode;
+            rate.className = rate.className.replace(/c-rating--val\d\d/, "c-rating--val" + normalize_score * 10);
+        }
+
+        //マイページ
+        var bkmElement = document.getElementsByClassName("p-bkm-item__ranking-score");
+        for (var i = 0; i < bkmElement.length; i++) {
+
+            if (typeof bkmElement[i].getElementsByClassName("tabelog-score")[0] !== "undefined") {
+                continue;
+            }
+
+            var element = bkmElement[i];
+            var score = parseFloat(element.textContent);
+
+            if (isNaN(score)) continue;
+
+            var normalize_score = normalize(score);
+
+            element.innerHTML = normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ')</span>';
+        }
+
+    } else {
+        //PC用
+        //検索結果ページ
+        $(".list-rst__body .list-rst__rating-val").each(function(index, element) {
+            var score = parseFloat($(element).text());
+
+            if (isNaN(score)) return;
+
+            var normalize_score = normalize(score);
+
+            $(element).html(normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ")</span>");
+
+            var rate = $(element).parent()[0];
+            rate.className = rate.className.replace(/c-rating--val\d\d/, "c-rating--val" + normalize_score * 10);
+        });
+
+        //店舗詳細ページ
+        $("#js-header-rating .rdheader-rating__score-val").each(function(index, element) {
+            var score = parseFloat($(element).text());
+
+            if (isNaN(score)) return;
+
+            var normalize_score = normalize(score);
+
+            $(element).html('<span class="rdheader-rating__score-val-dtl">' + normalize_score.toFixed(1) + "</span>" + ' <b class="tabelog-score">(' + score.toFixed(2) + ")</b>");
+
+            var rate = $(element).parent()[0];
+            rate.className = rate.className.replace(/c-rating--val\d\d/, "c-rating--val" + normalize_score * 10);
+        });
+
+        //マイページ
+        $(".simple-rvw__rst-info .simple-rvw__score-total-val").each(function(index, element) {
+            var score = parseFloat($(element).text());
+
+            if (isNaN(score)) return;
+
+            var normalize_score = normalize(score);
+
+            $(element).html(normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ")</span>");
+
+            var rate = $(element).parent()[0];
+            rate.className = rate.className.replace(/c-rating--val\d\d/, "c-rating--val" + normalize_score * 10);
+        });
+    }
 }
+
+//SP用 さらに読み込むを押下された時
+document.getElementById("now-loading").onclick = function() {
+    //ajaxでレストラン情報の読み込みが終わった後に実行
+    setTimeout(patch, 3000);
+};
