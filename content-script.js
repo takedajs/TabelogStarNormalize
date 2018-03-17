@@ -63,6 +63,32 @@ function patch(){
             rate.className = rate.className.replace(/sptb-rating--val\d\d/, "sptb-rating--val" + normalize_score * 10);
         }
 
+        //店舗詳細ページ
+        var rstdlElement = document.getElementsByClassName("rstdtl-top-info");
+        for (var i = 0; i < rstdlElement.length; i++) {
+
+            //一度正規化したものは、再度正規化を行わない
+            if (typeof rstdlElement[i].getElementsByClassName("tabelog-score")[0] !== "undefined") {
+                continue;
+            }
+
+            var element = rstdlElement[i].getElementsByClassName("rstdtl-top-rating__score-val")[0];
+            var score = parseFloat(element.textContent);
+
+            //評価が0件のお店対応
+            if (isNaN(score)) continue;
+
+            //点数を正規化
+            var normalize_score = normalize(score);
+
+            //点数を正規化したものに変更する
+            element.innerHTML = normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ')</span>';
+
+            //星を正規化した点数に合わせる
+            var rate = element.parentNode;
+            rate.className = rate.className.replace(/c-rating--val\d\d/, "c-rating--val" + normalize_score * 10);
+        }
+
         //マイページ
         var bkmElement = document.getElementsByClassName("p-bkm-item__ranking-score");
         for (var i = 0; i < bkmElement.length; i++) {
@@ -83,7 +109,36 @@ function patch(){
 
     } else {
         //PC用
-        $(".c-rating__val").each(function(index, element) {
+        //検索結果ページ
+        $(".list-rst__body .list-rst__rating-val").each(function(index, element) {
+            var score = parseFloat($(element).text());
+
+            if (isNaN(score)) return;
+
+            var normalize_score = normalize(score);
+
+            $(element).html(normalize_score.toFixed(1) + ' <span class="tabelog-score">(' + score.toFixed(2) + ")</span>");
+
+            var rate = $(element).parent()[0];
+            rate.className = rate.className.replace(/c-rating--val\d\d/, "c-rating--val" + normalize_score * 10);
+        });
+
+        //店舗詳細ページ
+        $("#js-header-rating .rdheader-rating__score-val").each(function(index, element) {
+            var score = parseFloat($(element).text());
+
+            if (isNaN(score)) return;
+
+            var normalize_score = normalize(score);
+
+            $(element).html('<span class="rdheader-rating__score-val-dtl">' + normalize_score.toFixed(1) + "</span>" + ' <b class="tabelog-score">(' + score.toFixed(2) + ")</b>");
+
+            var rate = $(element).parent()[0];
+            rate.className = rate.className.replace(/c-rating--val\d\d/, "c-rating--val" + normalize_score * 10);
+        });
+
+        //マイページ
+        $(".simple-rvw__rst-info .simple-rvw__score-total-val").each(function(index, element) {
             var score = parseFloat($(element).text());
 
             if (isNaN(score)) return;
