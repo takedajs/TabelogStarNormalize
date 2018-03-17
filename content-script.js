@@ -29,10 +29,10 @@ function patch(){
     }
 
     //モバイルかどうか判別
-    //c-rating__valクラスはPCにしか存在しない
-    var isMobile = true;
-    if (document.getElementsByClassName("c-rating__val").length > 0) {
-        isMobile = false;
+    //id="useragent-switcher"はSPだけに存在していた
+    var isMobile = false;
+    if (document.getElementById("useragent-switcher") != null ) {
+        isMobile = true;
     }
 
     if (isMobile) {
