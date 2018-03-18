@@ -27,7 +27,5 @@ below 3.0 => 1 star
 
 # Reference
 
-このアドオンは拡張機能
-
-miyagawa/Tabelog-HonestStars: Make Tabelog Stars more honest
+miyagawa/Tabelog-HonestStars: Make Tabelog Stars more honest  
 https://github.com/miyagawa/Tabelog-HonestStars/
