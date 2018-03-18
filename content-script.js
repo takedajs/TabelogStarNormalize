@@ -29,12 +29,12 @@ function patch(){
     }
 
     //モバイルかどうか判別
-    //id="useragent-switcher"はSPだけに存在していた
-    var isMobile = false;
-    if (document.getElementById("useragent-switcher") != null ) {
-        isMobile = true;
+    //SPだけで利用されているメニューのID取得
+    var isMobile = true;
+    if (document.getElementById("usermenu") == null) {
+        isMobile = false;
     }
-
+    
     if (isMobile) {
         //SP用
         //検索結果ページ
