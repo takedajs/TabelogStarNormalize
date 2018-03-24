@@ -34,7 +34,7 @@ function patch(){
     if (document.getElementById("usermenu") == null) {
         isMobile = false;
     }
-    
+
     if (isMobile) {
         //SP用
         //検索結果ページ
